@@ -2,6 +2,13 @@
 name = "cptc"
 version = "0.1.0"
 edition = "2021"
+authors = ["Daniel Ronalds"]
+description=" A cli tool for copying file/s contents to your clipboard"
+license="MIT"
+readme="README.md"
+repository="https://github.com/danielronalds/cptc"
+keywords=["cli", "clipboard", "copy", "tools"]
+categories=["command-line-utilities","filesystem"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
