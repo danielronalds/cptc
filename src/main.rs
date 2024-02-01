@@ -1,9 +1,13 @@
-use std::{env, error::Error, fs};
+use std::{env, error::Error, fs, io::Write};
 
 use arboard::Clipboard;
 
+mod config;
+
+use config::extract_config;
+
 fn main() {
-    let files = get_args();
+    let (config, files) = extract_config(get_args());
 
     if files.is_empty() {
         return;
@@ -15,6 +19,12 @@ fn main() {
         .fold("".to_string(), |acc, x| format!("{}\n{}", acc, x));
 
     copy_to_clipboard(&merged_content).expect("Failed to copy contents to the clipboard");
+
+    if config.pause() {
+        print!("Pausing execution, press enter to exit! ");
+        let _ = std::io::stdout().flush();
+        let _ = std::io::stdin().read_line(&mut String::new());
+    }
 }
 
 /// Gets the args passed to the program
