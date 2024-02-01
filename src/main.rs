@@ -39,10 +39,18 @@ fn get_args() -> Vec<String> {
 }
 
 /// Sets the given string to the user's clipboard
-fn copy_to_clipboard(contents: &str) -> Result<(), Box<dyn Error>> {
+///
+/// # Parameters
+///
+/// - `content` The content to set the clipboard to contain
+///
+/// # Returns
+///
+/// Whether the clipboard was successful set or not
+fn copy_to_clipboard(content: &str) -> Result<(), Box<dyn Error>> {
     let mut clipboard = Clipboard::new()?;
 
-    clipboard.set_text(contents)?;
+    clipboard.set_text(content)?;
 
     Ok(())
 }
