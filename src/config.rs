@@ -3,19 +3,19 @@ const PAUSE_OPTIONS: [&str; 2] = ["--pause", "-p"];
 const CONFIG_OPTIONS: [[&str; 2]; 1] = [PAUSE_OPTIONS];
 
 #[derive(Default)]
-pub struct Config {
+pub struct Flags {
     pause: bool,
 }
 
-impl Config {
+impl Flags {
     pub fn pause(&self) -> bool {
         self.pause
     }
 }
 
-impl From<Vec<String>> for Config {
+impl From<Vec<String>> for Flags {
     fn from(value: Vec<String>) -> Self {
-        let mut config = Config::default();
+        let mut config = Flags::default();
 
         for option in value {
             if PAUSE_OPTIONS.contains(&option.as_str()) {
@@ -27,7 +27,7 @@ impl From<Vec<String>> for Config {
     }
 }
 
-pub fn extract_config(args: Vec<String>) -> (Config, Vec<String>) {
+pub fn extract_flags(args: Vec<String>) -> (Flags, Vec<String>) {
     let config_options: Vec<String> = args
         .iter()
         .filter_map(|x| {
@@ -52,5 +52,5 @@ pub fn extract_config(args: Vec<String>) -> (Config, Vec<String>) {
         })
         .collect();
 
-    (Config::from(config_options), files)
+    (Flags::from(config_options), files)
 }

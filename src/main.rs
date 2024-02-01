@@ -4,10 +4,10 @@ use arboard::Clipboard;
 
 mod config;
 
-use config::extract_config;
+use config::extract_flags;
 
 fn main() {
-    let (config, files) = extract_config(get_args());
+    let (flags, files) = extract_flags(get_args());
 
     if files.is_empty() {
         return;
@@ -20,7 +20,7 @@ fn main() {
 
     copy_to_clipboard(&merged_content).expect("Failed to copy contents to the clipboard");
 
-    if config.pause() {
+    if flags.pause() {
         print!("Pausing execution, press enter to exit! ");
         let _ = std::io::stdout().flush();
         let _ = std::io::stdin().read_line(&mut String::new());
