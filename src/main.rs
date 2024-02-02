@@ -20,6 +20,10 @@ fn main() {
 
     copy_to_clipboard(&merged_content).expect("Failed to copy contents to the clipboard");
 
+    if flags.verbouse() {
+        println!("{}", merged_content)
+    }
+
     if flags.pause() {
         print!("Pausing execution, press enter to exit! ");
         let _ = std::io::stdout().flush();

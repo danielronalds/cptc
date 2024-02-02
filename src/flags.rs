@@ -1,10 +1,12 @@
-/// An array of the pause flags options
+// Arrays of the different flag options
 const PAUSE_FLAGS: [&str; 2] = ["--pause", "-p"];
+const VERBOUSE_FLAGS: [&str; 2] = ["--verbouse", "-v"];
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 /// A struct for storing the flags the program is run with
 pub struct Flags {
     pause: bool,
+    verbouse: bool,
 }
 
 impl Flags {
@@ -12,17 +14,23 @@ impl Flags {
     pub fn pause(&self) -> bool {
         self.pause
     }
+
+    /// Whether the program should print the contents of the clipboard
+    pub fn verbouse(&self) -> bool {
+        self.verbouse
+    }
 }
 
 impl From<Vec<String>> for Flags {
     fn from(value: Vec<String>) -> Self {
-        let mut config = Flags::default();
+        let mut flags = Flags::default();
 
         for flag in value {
-            config.pause = PAUSE_FLAGS.contains(&flag.as_str());
+            flags.pause = PAUSE_FLAGS.contains(&flag.as_str());
+            flags.verbouse = VERBOUSE_FLAGS.contains(&flag.as_str());
         }
 
-        config
+        flags
     }
 }
 
@@ -93,7 +101,13 @@ mod tests {
 
         let (flags, files) = extract_flags(args);
 
-        assert_eq!(flags, Flags { pause: true });
+        assert_eq!(
+            flags,
+            Flags {
+                pause: true,
+                verbouse: false
+            }
+        );
 
         assert_eq!(
             files,
