@@ -13,22 +13,17 @@ $ cargo install cptc
 
 ## Usage
 
-Using `cptc` is a simple as calling it with a file. For 
-example to copy the contents of `test.txt` to your clipboard
-you'd use the following.
-
-```sh
-$ cptc test.txt
 ```
+usage: cptc [OPTIONS] [FILE]...
 
-### Merging multiple files
+A cli tool for copying file/s contents to your clipboard
 
-To copy multiple files, simply pass multiple files to `cptc`.
-**Note:** The contents of the files are merged together with 
-a newline inserted between them.
+Options:
+  --help       -h      Print this menu and exit
+  --version    -v      Print the version number and exit
+  --verbouse   -v      Print what is copied
+  --pause      -p      Pauses exiting of the program until ENTER is pressed
 
-```sh 
-$ cptc first.txt second.txt
 ```
 
 ### Wayland support
@@ -38,3 +33,4 @@ program ends (A limitation of rust clipboard libraries). To
 overcome this use the `--pause` or `-p` flag to prevent the 
 program closing before you've had a change to paste the 
 contents of the file!
+
