@@ -2,6 +2,7 @@
 const PAUSE_FLAGS: [&str; 2] = ["--pause", "-p"];
 const VERBOUSE_FLAGS: [&str; 2] = ["--verbouse", "-v"];
 const HELP_FLAGS: [&str; 2] = ["--help", "-h"];
+const VERSION_FLAGS: [&str; 2] = ["--version", "-V"];
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 /// A struct for storing the flags the program is run with
@@ -9,6 +10,7 @@ pub struct Flags {
     pause: bool,
     verbouse: bool,
     help: bool,
+    version: bool,
 }
 
 impl Flags {
@@ -26,6 +28,11 @@ impl Flags {
     pub fn help(&self) -> bool {
         self.help
     }
+
+    /// Whether the program should print the version and exit
+    pub fn version(&self) -> bool {
+        self.version
+    }
 }
 
 impl From<Vec<String>> for Flags {
@@ -36,6 +43,7 @@ impl From<Vec<String>> for Flags {
             flags.pause = PAUSE_FLAGS.contains(&flag.as_str());
             flags.verbouse = VERBOUSE_FLAGS.contains(&flag.as_str());
             flags.help = HELP_FLAGS.contains(&flag.as_str());
+            flags.version = VERSION_FLAGS.contains(&flag.as_str());
         }
 
         flags
@@ -114,7 +122,8 @@ mod tests {
             Flags {
                 pause: true,
                 verbouse: false,
-                help: false
+                help: false,
+                version: false
             }
         );
 

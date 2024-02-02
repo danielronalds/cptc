@@ -6,11 +6,17 @@ mod flags;
 
 use flags::extract_flags;
 
+const NAME: &str = env!("CARGO_PKG_NAME");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
 
 fn main() {
     let (flags, files) = extract_flags(get_args());
+
+    if flags.version() {
+        println!("{} {}", NAME, VERSION);
+        return;
+    }
 
     if flags.help() || files.is_empty() {
         print_help();
@@ -67,15 +73,16 @@ fn copy_to_clipboard(content: &str) -> Result<(), Box<dyn Error>> {
 fn print_help() {
     let help = format!(
         "\
-usage: cptc [OPTIONS] [FILE]...
+usage: {} [OPTIONS] [FILE]...
 
 {}
 
 Options:
-  --help       -h      Show this menu
+  --help       -h      Print this menu and exit
+  --version    -v      Print the version number and exit
   --verbouse   -v      Print what is copied
   --pause      -p      Pauses exiting of the program until ENTER is pressed",
-        DESCRIPTION
+        NAME, DESCRIPTION
     );
 
     println!("{}", help);
