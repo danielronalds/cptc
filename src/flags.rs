@@ -34,7 +34,7 @@ impl From<Vec<String>> for Flags {
 ///
 /// # Returns
 ///
-/// A tuple with a `Flags` struct, and the remaing strings
+/// A tuple with a `Flags` struct, and the remaining strings
 pub fn extract_flags(args: Vec<String>) -> (Flags, Vec<String>) {
     let (flags, files) = split_arguments(args);
 
@@ -51,9 +51,9 @@ pub fn extract_flags(args: Vec<String>) -> (Flags, Vec<String>) {
 ///
 /// A tuple of two vecs of strings, with the first being flags
 fn split_arguments(args: Vec<String>) -> (Vec<String>, Vec<String>) {
-    let is_flag = |x: &str| x.chars().next() == Some('-');
+    let is_flag = |x: &str| x.starts_with('-');
 
-    let config_options: Vec<String> = args
+    let flags: Vec<String> = args
         .iter()
         .filter(|x| is_flag(x))
         .map(|x| x.to_string())
@@ -65,7 +65,7 @@ fn split_arguments(args: Vec<String>) -> (Vec<String>, Vec<String>) {
         .map(|x| x.to_string())
         .collect();
 
-    (config_options, files)
+    (flags, files)
 }
 
 #[cfg(test)]
@@ -97,7 +97,7 @@ mod tests {
 
         assert_eq!(
             files,
-            vec!["test.txt", "test1.txt", "test2.txt"]
+            ["test.txt", "test1.txt", "test2.txt"]
                 .iter()
                 .map(|x| x.to_string())
                 .collect::<Vec<String>>()
