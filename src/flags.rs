@@ -1,10 +1,7 @@
 /// An array of the pause flags options
-const PAUSE_OPTIONS: [&str; 2] = ["--pause", "-p"];
+const PAUSE_FLAGS: [&str; 2] = ["--pause", "-p"];
 
-/// An array of the different flags
-const CONFIG_OPTIONS: [[&str; 2]; 1] = [PAUSE_OPTIONS];
-
-#[derive(Default)]
+#[derive(Default, Debug, Clone, PartialEq, Eq)]
 /// A struct for storing the flags the program is run with
 pub struct Flags {
     pause: bool,
@@ -21,10 +18,8 @@ impl From<Vec<String>> for Flags {
     fn from(value: Vec<String>) -> Self {
         let mut config = Flags::default();
 
-        for option in value {
-            if PAUSE_OPTIONS.contains(&option.as_str()) {
-                config.pause = true;
-            }
+        for flag in value {
+            config.pause = PAUSE_FLAGS.contains(&flag.as_str());
         }
 
         config
@@ -41,29 +36,71 @@ impl From<Vec<String>> for Flags {
 ///
 /// A tuple with a `Flags` struct, and the remaing strings
 pub fn extract_flags(args: Vec<String>) -> (Flags, Vec<String>) {
+    let (flags, files) = split_arguments(args);
+
+    (Flags::from(flags), files)
+}
+
+/// Splits the given strings into flags and files
+///
+/// # Parameters
+///
+/// - `args` The vec of strings to split
+///
+/// # Returns
+///
+/// A tuple of two vecs of strings, with the first being flags
+fn split_arguments(args: Vec<String>) -> (Vec<String>, Vec<String>) {
+    let is_flag = |x: &str| x.chars().next() == Some('-');
+
     let config_options: Vec<String> = args
         .iter()
-        .filter_map(|x| {
-            for options in CONFIG_OPTIONS {
-                if options.contains(&x.as_str()) {
-                    return Some(x.to_string());
-                }
-            }
-            None
-        })
+        .filter(|x| is_flag(x))
+        .map(|x| x.to_string())
         .collect();
 
     let files: Vec<String> = args
         .iter()
-        .filter_map(|x| {
-            for options in CONFIG_OPTIONS {
-                if options.contains(&x.as_str()) {
-                    return None;
-                }
-            }
-            Some(x.to_string())
-        })
+        .filter(|x| !is_flag(x))
+        .map(|x| x.to_string())
         .collect();
 
-    (Flags::from(config_options), files)
+    (config_options, files)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::flags::{extract_flags, split_arguments, Flags};
+
+    #[test]
+    fn split_arguments_works() {
+        let args: Vec<String> = ["test.txt", "test1.txt", "test2.txt", "-p"]
+            .into_iter()
+            .map(|x| x.to_string())
+            .collect();
+
+        let (flags, _) = split_arguments(args);
+
+        assert_eq!(flags, vec!["-p".to_string()]);
+    }
+
+    #[test]
+    fn extract_flags_with_flags_works() {
+        let args: Vec<String> = ["test.txt", "test1.txt", "test2.txt", "-p"]
+            .into_iter()
+            .map(|x| x.to_string())
+            .collect();
+
+        let (flags, files) = extract_flags(args);
+
+        assert_eq!(flags, Flags { pause: true });
+
+        assert_eq!(
+            files,
+            vec!["test.txt", "test1.txt", "test2.txt"]
+                .iter()
+                .map(|x| x.to_string())
+                .collect::<Vec<String>>()
+        )
+    }
 }
