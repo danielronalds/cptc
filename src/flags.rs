@@ -1,12 +1,14 @@
 // Arrays of the different flag options
 const PAUSE_FLAGS: [&str; 2] = ["--pause", "-p"];
 const VERBOUSE_FLAGS: [&str; 2] = ["--verbouse", "-v"];
+const HELP_FLAGS: [&str; 2] = ["--help", "-h"];
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 /// A struct for storing the flags the program is run with
 pub struct Flags {
     pause: bool,
     verbouse: bool,
+    help: bool,
 }
 
 impl Flags {
@@ -19,6 +21,11 @@ impl Flags {
     pub fn verbouse(&self) -> bool {
         self.verbouse
     }
+
+    /// Whether the program should print the help menu and exit
+    pub fn help(&self) -> bool {
+        self.help
+    }
 }
 
 impl From<Vec<String>> for Flags {
@@ -28,6 +35,7 @@ impl From<Vec<String>> for Flags {
         for flag in value {
             flags.pause = PAUSE_FLAGS.contains(&flag.as_str());
             flags.verbouse = VERBOUSE_FLAGS.contains(&flag.as_str());
+            flags.help = HELP_FLAGS.contains(&flag.as_str());
         }
 
         flags
@@ -105,7 +113,8 @@ mod tests {
             flags,
             Flags {
                 pause: true,
-                verbouse: false
+                verbouse: false,
+                help: false
             }
         );
 
