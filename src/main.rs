@@ -2,9 +2,9 @@ use std::{env, error::Error, fs, io::Write};
 
 use arboard::Clipboard;
 
-mod config;
+mod flags;
 
-use config::extract_flags;
+use flags::extract_flags;
 
 fn main() {
     let (flags, files) = extract_flags(get_args());
