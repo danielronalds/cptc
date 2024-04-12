@@ -40,10 +40,10 @@ impl From<Vec<String>> for Flags {
         let mut flags = Flags::default();
 
         for flag in value {
-            flags.pause = PAUSE_FLAGS.contains(&flag.as_str());
-            flags.verbouse = VERBOUSE_FLAGS.contains(&flag.as_str());
-            flags.help = HELP_FLAGS.contains(&flag.as_str());
-            flags.version = VERSION_FLAGS.contains(&flag.as_str());
+            flags.pause = flags.pause || PAUSE_FLAGS.contains(&flag.as_str());
+            flags.verbouse = flags.verbouse || VERBOUSE_FLAGS.contains(&flag.as_str());
+            flags.help = flags.help || HELP_FLAGS.contains(&flag.as_str());
+            flags.version = flags.version || VERSION_FLAGS.contains(&flag.as_str());
         }
 
         flags
@@ -134,5 +134,33 @@ mod tests {
                 .map(|x| x.to_string())
                 .collect::<Vec<String>>()
         )
+    }
+
+    #[test]
+    fn extract_flags_with_multple_flags_works() {
+         let args: Vec<String> = ["test.txt", "test1.txt", "-v", "-p"]
+            .into_iter()
+            .map(|x| x.to_string())
+            .collect();
+
+        let (flags, files) = extract_flags(args);
+
+        assert_eq!(
+            flags,
+            Flags {
+                pause: true,
+                verbouse: true,
+                help: false,
+                version: false
+            }
+        );
+
+        assert_eq!(
+            files,
+            ["test.txt", "test1.txt"]
+                .iter()
+                .map(|x| x.to_string())
+                .collect::<Vec<String>>()
+        );
     }
 }
