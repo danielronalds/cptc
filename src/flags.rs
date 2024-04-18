@@ -1,8 +1,8 @@
 // Arrays of the different flag options
-const PAUSE_FLAGS: [&str; 2] = ["--pause", "-p"];
-const VERBOUSE_FLAGS: [&str; 2] = ["--verbouse", "-v"];
-const HELP_FLAGS: [&str; 2] = ["--help", "-h"];
-const VERSION_FLAGS: [&str; 2] = ["--version", "-V"];
+const PAUSE_FLAGS: [&str; 2] = ["--pause", "p"];
+const VERBOUSE_FLAGS: [&str; 2] = ["--verbouse", "v"];
+const HELP_FLAGS: [&str; 2] = ["--help", "h"];
+const VERSION_FLAGS: [&str; 2] = ["--version", "V"];
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 /// A struct for storing the flags the program is run with
@@ -40,6 +40,18 @@ impl From<Vec<String>> for Flags {
         let mut flags = Flags::default();
 
         for flag in value {
+            if flag.get(0..2) != Some("--") {
+                for char in flag.chars() {
+                    flags.pause = flags.pause || PAUSE_FLAGS.contains(&char.to_string().as_str());
+                    flags.verbouse =
+                        flags.verbouse || VERBOUSE_FLAGS.contains(&char.to_string().as_str());
+                    flags.help = flags.help || HELP_FLAGS.contains(&char.to_string().as_str());
+                    flags.version =
+                        flags.version || VERSION_FLAGS.contains(&char.to_string().as_str());
+                }
+                continue;
+            }
+
             flags.pause = flags.pause || PAUSE_FLAGS.contains(&flag.as_str());
             flags.verbouse = flags.verbouse || VERBOUSE_FLAGS.contains(&flag.as_str());
             flags.help = flags.help || HELP_FLAGS.contains(&flag.as_str());
@@ -138,7 +150,35 @@ mod tests {
 
     #[test]
     fn extract_flags_with_multple_flags_works() {
-         let args: Vec<String> = ["test.txt", "test1.txt", "-v", "-p"]
+        let args: Vec<String> = ["test.txt", "test1.txt", "-v", "-p"]
+            .into_iter()
+            .map(|x| x.to_string())
+            .collect();
+
+        let (flags, files) = extract_flags(args);
+
+        assert_eq!(
+            flags,
+            Flags {
+                pause: true,
+                verbouse: true,
+                help: false,
+                version: false
+            }
+        );
+
+        assert_eq!(
+            files,
+            ["test.txt", "test1.txt"]
+                .iter()
+                .map(|x| x.to_string())
+                .collect::<Vec<String>>()
+        );
+    }
+
+    #[test]
+    fn extract_flags_with_multple_flags_together_works() {
+        let args: Vec<String> = ["test.txt", "test1.txt", "-vp"]
             .into_iter()
             .map(|x| x.to_string())
             .collect();
