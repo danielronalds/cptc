@@ -127,7 +127,7 @@ usage: {} [OPTIONS] [FILE]...
 
 Options:
   --help       -h      Print this menu and exit
-  --version    -v      Print the version number and exit
+  --version    -V      Print the version number and exit
   --verbouse   -v      Print what is copied
   --pause      -p      Pauses exiting of the program until ENTER is pressed",
         NAME, DESCRIPTION
