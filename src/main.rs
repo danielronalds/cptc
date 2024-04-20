@@ -52,8 +52,8 @@ fn main() {
         println!("{}", merged_content)
     }
 
-    if flags.pause() {
-        print!("Pausing execution, press enter to exit! ");
+    if flags.pause() || is_wayland() {
+        print!("[cptc] Pausing execution, press enter to exit! ");
         let _ = std::io::stdout().flush();
         let _ = std::io::stdin().read_line(&mut String::new());
     }
@@ -87,6 +87,16 @@ fn get_piped_input() -> Option<String> {
     match piped_input.is_empty() {
         true => None,
         false => Some(piped_input),
+    }
+}
+
+/// Determines if the user is using wayland or not
+fn is_wayland() -> bool {
+    let xdg_session = env::var("XDG_SESSION_TYPE");
+
+    match xdg_session {
+        Ok(value) => value == "wayland",
+        Err(_) => false,
     }
 }
 
