@@ -1,4 +1,9 @@
-use std::{env, error::Error, fs, io::Write};
+use std::{
+    env,
+    error::Error,
+    fs,
+    io::{self, IsTerminal, Write},
+};
 
 use arboard::Clipboard;
 
@@ -18,15 +23,28 @@ fn main() {
         return;
     }
 
-    if flags.help() || files.is_empty() {
+    let piped_input = get_piped_input();
+
+    if flags.help() || files.is_empty() && piped_input.is_none() {
         print_help();
         return;
     }
 
-    let merged_content = files
+    let mut merged_content = files
         .iter()
         .filter_map(|path| fs::read_to_string(path).ok())
-        .fold("".to_string(), |acc, x| format!("{}\n{}", acc, x));
+        .fold("".to_string(), |acc, x| {
+            format!("{}{}{}", acc, if !acc.is_empty() { "\n" } else { "" }, x)
+        });
+
+    if let Some(piped_input) = piped_input {
+        merged_content = format!(
+            "{}{}{}",
+            piped_input,
+            if merged_content.is_empty() { "" } else { "\n" },
+            merged_content
+        );
+    }
 
     copy_to_clipboard(&merged_content).expect("Failed to copy contents to the clipboard");
 
@@ -49,7 +67,27 @@ fn main() {
 fn get_args() -> Vec<String> {
     let args: Vec<String> = env::args().map(|x| x.to_string()).collect();
 
-    args[1..].to_vec()
+    args[1..].to_vec() // 1st arg is not required
+}
+
+/// Gets the piped in content as a String
+///
+/// # Returns
+///
+/// Some(piped_input) if there is any input, otherwise None
+fn get_piped_input() -> Option<String> {
+    let stdin = io::stdin();
+
+    if stdin.is_terminal() {
+        return None;
+    }
+
+    let piped_input = io::read_to_string(stdin).ok()?;
+
+    match piped_input.is_empty() {
+        true => None,
+        false => Some(piped_input),
+    }
 }
 
 /// Sets the given string to the user's clipboard
