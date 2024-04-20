@@ -31,6 +31,10 @@ Options:
 Currently on Wayland, the clipboard will be cleared when the 
 program ends (A limitation of rust clipboard libraries). To 
 overcome this use the `--pause` or `-p` flag to prevent the 
-program closing before you've had a change to paste the 
+program closing before you've had a chance to paste the
 contents of the file!
+
+The program should auto-pause when it detects Wayland, however
+if you can't seem to paste the content you've copied, this
+might be the issue
 
